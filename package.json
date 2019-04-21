@@ -1,6 +1,11 @@
 {
   "name": "tankgame",
   "version": "1.0.0",
+  "scripts": {
+    "start": "cd packages/client && yarn start",
+    "server": "cd packages/server && yarn start",
+    "now-build": "cd packages/client && yarn build"
+  },
   "private": true,
   "repository": "git@github.com:gaoxiaoliangz/tankgame.git",
   "author": "gaoxiaoliangz <gaoxiaoliangz@gmail.com>",
