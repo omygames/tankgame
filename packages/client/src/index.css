@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: #666;
+}
+
+.sep {
+  display: inline-block;
+  margin: 0 5px;
+  color: #ddd;
+}
