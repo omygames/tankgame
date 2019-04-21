@@ -1,0 +1,31 @@
+{
+  "alias": ["thetankgame.now.sh"],
+  "version": 2,
+  "name": "thetankgame",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "packages/client/build" }
+    },
+    {
+      "src": "packages/server/src/app.js",
+      "use": "@now/node",
+      "config": { "maxLambdaSize": "50mb" }
+    }
+  ],
+  "routes": [
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/asset-manifest.json", "dest": "/asset-manifest.json" },
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/favicon.png", "dest": "/favicon.png" },
+    { "src": "/service-worker.js", "dest": "/service-worker.js" },
+    { "src": "/(.*)", "dest": "/" },
+    { "src": "/api/(.*)", "dest": "/packages/server/src/app.js" }
+  ],
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  }
+}
