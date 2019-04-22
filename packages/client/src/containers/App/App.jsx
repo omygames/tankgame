@@ -10,14 +10,19 @@ import Pool from '../Pool/Pool'
 class App extends Component {
   state = {
     connected: false,
-    game: window.location.pathname.substr(1)
+    game:
+      window.location.pathname.substr(
+        1,
+        window.location.pathname.length -
+          (window.location.pathname.endsWith('/') ? 2 : 1)
+      ) || '/',
   }
 
   componentDidMount() {
     createSocket().then(socket => {
       this.socket = socket
       this.setState({
-        connected: true
+        connected: true,
       })
     })
   }
@@ -26,28 +31,23 @@ class App extends Component {
     const { connected, game } = this.state
 
     if (!connected) {
-      return (
-        <div>Connecting...</div>
-      )
+      return <div>Connecting...</div>
     }
 
-    const snakeGame = (
-      <SnakeGame
-        socket={this.socket}
-      />
-    )
-    let gameEle = snakeGame
+    console.log(game)
 
-    if (game === 'tank') {
-      gameEle = <TankGameFSContainer socket={this.socket} />
-    } else if (game === 'tank2') {
-      gameEle = <TankGameStateSynced socket={this.socket} />
+    const routes = {
+      '/': <TankGameFSContainer socket={this.socket} />,
+      tank2: <TankGameStateSynced socket={this.socket} />,
+      snake: <SnakeGame socket={this.socket} />,
     }
+
+    const routeEl = routes[game] || routes['/']
 
     return (
       <div className="App">
         <Pool socket={this.socket} />
-        {gameEle}
+        {routeEl}
       </div>
     )
   }
