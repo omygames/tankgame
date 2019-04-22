@@ -5,14 +5,14 @@ import guid from '../../utils/guid'
 
 class Pool extends Component {
   static propTypes = {
-    socket: PT.object.isRequired
+    socket: PT.object.isRequired,
   }
 
   socket = this.props.socket
 
   state = {
     onlinePlayerCount: 0,
-    ping: 'N/A'
+    ping: 'N/A',
   }
 
   componentDidMount() {
@@ -25,14 +25,15 @@ class Pool extends Component {
   updatePing = () => {
     const lastPing = {
       uuid: guid(),
-      emittedAt: new Date().valueOf()
+      emittedAt: new Date().valueOf(),
     }
     this.socket.emit('s_ping', lastPing)
     this.socket.on('s_pong', data => {
       if (data.uuid === lastPing.uuid) {
-        const ping = data.receivedAt - lastPing.emittedAt
+        // const ping = data.receivedAt - lastPing.emittedAt
+        const ping = new Date().valueOf() - lastPing.emittedAt
         this.setState({
-          ping
+          ping,
         })
       }
     })
@@ -40,7 +41,7 @@ class Pool extends Component {
 
   updatePlayerCount = count => {
     this.setState({
-      onlinePlayerCount: count
+      onlinePlayerCount: count,
     })
   }
 
