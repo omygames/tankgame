@@ -17,6 +17,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(express.static(path.resolve(__dirname, '../../client/build')))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
@@ -28,7 +29,8 @@ app.use((req, res, next) => {
 })
 
 // error handler
-app.use((err, req, res, next) => { // eslint-disable-line
+app.use((err, req, res, next) => {
+  // eslint-disable-line
   // set locals, only providing error in development
   res.locals.message = err.message
   res.locals.error = req.app.get('env') === 'development' ? err : {}
