@@ -34,10 +34,9 @@ class App extends Component {
       return <div>Connecting...</div>
     }
 
-    console.log(game)
-
     const routes = {
       '/': <TankGameFSContainer socket={this.socket} />,
+      // @ts-ignore
       tank2: <TankGameStateSynced socket={this.socket} />,
       snake: <SnakeGame socket={this.socket} />,
     }
