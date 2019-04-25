@@ -2,7 +2,9 @@
 import React, { Component } from 'react'
 import PT from 'prop-types'
 import { Scene } from './gameObjects'
-import TankGameEngine, { canvas } from './TankGameEngine'
+import TankGameEngine from './TankGameEngine'
+import { getWindowSize } from './helper/screen'
+import _ from 'lodash'
 
 class TankGameFS extends Component {
   static propTypes = {
@@ -10,20 +12,20 @@ class TankGameFS extends Component {
   }
 
   componentDidMount() {
-    const canvas = this.canvas
-    const ctx = canvas.getContext('2d')
+    const { ctx, height, width } = this.handleRenderCanvas()
     const scene = new Scene({
       ctx,
       scale: 1,
-      width: canvas.width,
-      height: canvas.height
+      width,
+      height,
     })
+    this.scene = scene
     this.engine = new TankGameEngine({
       scene: this.scene,
       onPushClientEvent: this.props.onPushClientEvent
     })
-    this.scene = scene
     document.addEventListener('keydown', this.keydown)
+    document.addEventListener('resize', _.throttle(this.handleResize, 500))
 
     const animate = () => {
       requestAnimationFrame(animate)
@@ -36,6 +38,32 @@ class TankGameFS extends Component {
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.keydown)
+  }
+
+  handleResize() {
+    const { ctx, height, width } = this.handleRenderCanvas()
+    this.scene.resize({
+      ctx,
+      height,
+      width,
+    })
+  }
+
+  handleRenderCanvas() {
+    const windowSize = getWindowSize()
+    const canvas = this.canvas
+    canvas.width = windowSize.width
+    canvas.height = windowSize.height
+    canvas.style.width = `${windowSize.width}px`
+    canvas.style.height = `${windowSize.height}px`
+
+    const ctx = canvas.getContext('2d')
+    ctx.scale(windowSize.ratio, windowSize.ratio)
+    return {
+      ctx,
+      height: canvas.height,
+      width: canvas.width,
+    }
   }
 
   handleMove = direction => {
@@ -54,6 +82,7 @@ class TankGameFS extends Component {
   }
 
   keydown = (evt) => {
+    // TODO: 使用事件处理器处理状态
     switch (evt.key) {
       case 'w':
         this.handleMove('up')
@@ -81,9 +110,10 @@ class TankGameFS extends Component {
 
   render() {
     return (
-      <canvas ref={ref => { this.canvas = ref }} width={canvas.width} height={canvas.height}></canvas>
+      <canvas ref={ref => { this.canvas = ref }} className="fullscreen" ></canvas>
     )
   }
 }
+
 
 export default TankGameFS

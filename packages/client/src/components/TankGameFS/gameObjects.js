@@ -1,7 +1,9 @@
 import _ from 'lodash'
 
-const playerSpeed = 10
-const bulletSpeed = 3
+const PLAYER_SPEED = 4
+const BULLET_SPEED = 6
+const BULLET_OFFSET = 600
+const SHOOT_SPACING = 300
 
 class GameObject {
   constructor() {
@@ -58,22 +60,22 @@ export class Tank extends GameObject {
   }
 
   up = () => {
-    this.y -= playerSpeed
+    this.y -= PLAYER_SPEED
     this.direction = 0
   }
 
   down = () => {
-    this.y += playerSpeed
+    this.y += PLAYER_SPEED
     this.direction = 1
   }
 
   left = () => {
-    this.x -= playerSpeed
+    this.x -= PLAYER_SPEED
     this.direction = 2
   }
 
   right = () => {
-    this.x += playerSpeed
+    this.x += PLAYER_SPEED
     this.direction = 3
   }
 
@@ -85,26 +87,29 @@ export class Tank extends GameObject {
     }
   }
 
-  shoot = () => {
-    let bullet
-    switch (this.direction) {
-      case 0:
-        bullet = new Bullet(this.x + 9, this.y, this.direction, this)
-        break
-      case 1:
-        bullet = new Bullet(this.x + 9, this.y + 22, this.direction, this)
-        break
-      case 2:
-        bullet = new Bullet(this.x, this.y + 9, this.direction, this)
-        break
-      case 3:
-        bullet = new Bullet(this.x + 22, this.y + 9, this.direction, this)
-        break
-      default:
-        break
+  shoot = (() => {
+    const fn = () => {
+      let bullet
+      switch (this.direction) {
+        case 0:
+          bullet = new Bullet(this.x + 9, this.y, this.direction, this)
+          break
+        case 1:
+          bullet = new Bullet(this.x + 9, this.y + 22, this.direction, this)
+          break
+        case 2:
+          bullet = new Bullet(this.x, this.y + 9, this.direction, this)
+          break
+        case 3:
+          bullet = new Bullet(this.x + 22, this.y + 9, this.direction, this)
+          break
+        default:
+          break
+      }
+      this.bullets.push(bullet)
     }
-    this.bullets.push(bullet)
-  }
+    return _.throttle(fn, SHOOT_SPACING)
+  })()
 
   get objects() {
     return this.bullets.concat(this)
@@ -165,35 +170,44 @@ export class Tank extends GameObject {
 export class Bullet extends GameObject {
   constructor(x, y, direction, entity) {
     super()
+    this.initX = x
+    this.initY = y
     this.x = x
     this.y = y
     this.direction = direction
     this.entity = entity
+    this.radius = BULLET_OFFSET
   }
 
   next = () => {
     if (this.inactive) return
     switch (this.direction) { // up0 down1 left2 right3
       case 0:
-        this.y -= bulletSpeed
+        this.y -= BULLET_SPEED
         break
       case 1:
-        this.y += bulletSpeed
+        this.y += BULLET_SPEED
         break
       case 2:
-        this.x -= bulletSpeed
+        this.x -= BULLET_SPEED
         break
       case 3:
-        this.x += bulletSpeed
+        this.x += BULLET_SPEED
         break
       default:
         break
     }
-
-    // TODO
-    if (this.x < 0 || this.x > 800 || this.y < 0 || this.y > 600) {
+    const bulletActive = this.judge()
+    if (!bulletActive) {
       this.inactive = true
     }
+  }
+
+  judge() {
+    const dx = this.initX - this.x
+    const dy = this.initY - this.y
+    // 三角形直角边平方和半径平方对比判断在子弹射程范围内
+    return Math.pow(dx, 2) + Math.pow(dy, 2) <= Math.pow(this.radius, 2)
   }
 
   render = (scene) => {
@@ -245,5 +259,11 @@ export class Scene extends GameObject {
         }
       })
     })
+  }
+
+  resize({ width, height, ctx }) {
+    this.width = width
+    this.height = height
+    this.ctx = ctx
   }
 }
