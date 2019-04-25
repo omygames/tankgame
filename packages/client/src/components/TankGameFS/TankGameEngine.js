@@ -3,11 +3,6 @@ import _ from 'lodash'
 import { Tank } from './gameObjects'
 import Game from '../../game/Game'
 
-export const canvas = {
-  width: 800,
-  height: 600
-}
-
 const defaultTank = {
   color: 'red',
   color2: 'yellow',
@@ -135,6 +130,7 @@ class TankGameEngine extends Game {
       }
     }
   }
+
 }
 
 export default TankGameEngine

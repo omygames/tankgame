@@ -3,10 +3,17 @@ body {
   padding: 0;
   font-family: sans-serif;
   color: #666;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .sep {
   display: inline-block;
   margin: 0 5px;
   color: #ddd;
+}
+.fullscreen {
+  width: 100vw;
+  height: 100vh;
 }
