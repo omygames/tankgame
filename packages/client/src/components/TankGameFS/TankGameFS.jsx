@@ -1,15 +1,17 @@
 // @ts-check
 import React, { Component } from 'react'
 import PT from 'prop-types'
+import _ from 'lodash'
 import { Scene } from './gameObjects'
 import TankGameEngine from './TankGameEngine'
 import { getWindowSize } from './helper/screen'
-import _ from 'lodash'
 
 class TankGameFS extends Component {
   static propTypes = {
-    onPushClientEvent: PT.func.isRequired
+    onPushClientEvent: PT.func.isRequired,
   }
+
+  downKeys = {}
 
   componentDidMount() {
     const { ctx, height, width } = this.handleRenderCanvas()
@@ -22,9 +24,10 @@ class TankGameFS extends Component {
     this.scene = scene
     this.engine = new TankGameEngine({
       scene: this.scene,
-      onPushClientEvent: this.props.onPushClientEvent
+      onPushClientEvent: this.props.onPushClientEvent,
     })
     document.addEventListener('keydown', this.keydown)
+    document.addEventListener('keyup', this.keyup)
     document.addEventListener('resize', _.throttle(this.handleResize, 500))
 
     const animate = () => {
@@ -68,35 +71,68 @@ class TankGameFS extends Component {
 
   handleMove = direction => {
     this.engine.tank.move(direction)
-    this.props.onPushClientEvent(this.engine.generateSelfEvent({
-      type: 'tank_move',
-      payload: direction
-    }))
+    this.props.onPushClientEvent(
+      this.engine.generateSelfEvent({
+        type: 'tank_move',
+        payload: direction,
+      })
+    )
+  }
+
+  handleStop = () => {
+    this.engine.tank.stop()
+    this.props.onPushClientEvent(
+      this.engine.generateSelfEvent({
+        type: 'tank_stop',
+      })
+    )
   }
 
   handleShoot = () => {
     this.engine.tank.shoot()
-    this.props.onPushClientEvent(this.engine.generateSelfEvent({
-      type: 'tank_shoot'
-    }))
+    this.props.onPushClientEvent(
+      this.engine.generateSelfEvent({
+        type: 'tank_shoot',
+      })
+    )
   }
 
-  keydown = (evt) => {
+  keyup = evt => {
+    switch (evt.key) {
+      case 'w':
+      case 'd':
+      case 's':
+      case 'a':
+        delete this.downKeys[evt.key]
+        if (_.isEmpty(this.downKeys)) {
+          this.handleStop()
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  keydown = evt => {
     // TODO: 使用事件处理器处理状态
     switch (evt.key) {
       case 'w':
         this.handleMove('up')
+        this.downKeys.w = true
         break
       case 'd':
         this.handleMove('right')
+        this.downKeys.d = true
         break
       case 's':
         this.handleMove('down')
+        this.downKeys.s = true
         break
       case 'a':
         this.handleMove('left')
+        this.downKeys.a = true
         break
-      case 'k':
+      case 'j':
         this.handleShoot()
         break
       // 测试击中效果
@@ -110,10 +146,14 @@ class TankGameFS extends Component {
 
   render() {
     return (
-      <canvas ref={ref => { this.canvas = ref }} className="fullscreen" ></canvas>
+      <canvas
+        ref={ref => {
+          this.canvas = ref
+        }}
+        className="fullscreen"
+      />
     )
   }
 }
-
 
 export default TankGameFS

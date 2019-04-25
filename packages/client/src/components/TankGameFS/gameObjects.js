@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const PLAYER_SPEED = 4
+const PLAYER_SPEED = 2
 const BULLET_SPEED = 6
 const BULLET_OFFSET = 600
 const SHOOT_SPACING = 300
@@ -10,8 +10,8 @@ class GameObject {
     this.inactive = false
   }
 
-  next = () => { }
-  render = () => { }
+  next = () => {}
+  render = () => {}
 }
 
 export class Tank extends GameObject {
@@ -26,21 +26,43 @@ export class Tank extends GameObject {
     this.hp = hp
     this._originalColor = this.color
     this._blink = []
+    this.speed = 0
   }
 
   next = () => {
+    this.updatePosition()
     this.bullets = this.bullets.filter(b => {
       return !b.inactive
     })
     const blinkIndex = this._blink.shift()
     if (blinkIndex && blinkIndex % 4 === 0) {
-      this.color= 'black'
+      this.color = 'black'
     } else {
       this.color = this._originalColor
     }
   }
 
-  move = (direction) => {
+  updatePosition = () => {
+    switch (this.direction) {
+      case 0:
+        this.y -= this.speed
+        break
+      case 1:
+        this.y += this.speed
+        break
+      case 2:
+        this.x -= this.speed
+        break
+      case 3:
+        this.x += this.speed
+        break
+      default:
+        break
+    }
+  }
+
+  move = direction => {
+    this.speed = PLAYER_SPEED
     switch (direction) {
       case 'up':
         this.up()
@@ -59,23 +81,23 @@ export class Tank extends GameObject {
     }
   }
 
+  stop = () => {
+    this.speed = 0
+  }
+
   up = () => {
-    this.y -= PLAYER_SPEED
     this.direction = 0
   }
 
   down = () => {
-    this.y += PLAYER_SPEED
     this.direction = 1
   }
 
   left = () => {
-    this.x -= PLAYER_SPEED
     this.direction = 2
   }
 
   right = () => {
-    this.x += PLAYER_SPEED
     this.direction = 3
   }
 
@@ -115,7 +137,7 @@ export class Tank extends GameObject {
     return this.bullets.concat(this)
   }
 
-  render = (scene) => {
+  render = scene => {
     const entity = this
     const ctx = scene.ctx
     switch (entity.direction) {
@@ -181,7 +203,9 @@ export class Bullet extends GameObject {
 
   next = () => {
     if (this.inactive) return
-    switch (this.direction) { // up0 down1 left2 right3
+    switch (
+      this.direction // up0 down1 left2 right3
+    ) {
       case 0:
         this.y -= BULLET_SPEED
         break
@@ -210,7 +234,7 @@ export class Bullet extends GameObject {
     return Math.pow(dx, 2) + Math.pow(dy, 2) <= Math.pow(this.radius, 2)
   }
 
-  render = (scene) => {
+  render = scene => {
     const ctx = scene.ctx
     ctx.fillStyle = this.color || 'red'
     ctx.fillRect(this.x, this.y, 2, 2)
@@ -218,12 +242,7 @@ export class Bullet extends GameObject {
 }
 
 export class Scene extends GameObject {
-  constructor({
-    width,
-    height,
-    scale = 1,
-    ctx
-  }) {
+  constructor({ width, height, scale = 1, ctx }) {
     super()
     this.width = width
     this.height = height
@@ -233,12 +252,12 @@ export class Scene extends GameObject {
     this.type = 'scene'
   }
 
-  add = (object) => {
+  add = object => {
     this.objects.push(object)
     return object
   }
 
-  remove = (object) => {
+  remove = object => {
     for (let i = 0; i < this.objects.length; i++) {
       if (this.objects[i] === object) {
         delete this.objects[i]
@@ -247,13 +266,13 @@ export class Scene extends GameObject {
     }
   }
 
-  render = (objects) => {
+  render = objects => {
     this.ctx.fillStyle = 'black'
     this.ctx.fillRect(0, 0, this.width * this.scale, this.height * this.scale)
     const toRender = objects.concat(this.objects)
 
     toRender.forEach(obj => {
-      (obj.objects ? obj.objects : [obj]).forEach(object => {
+      ;(obj.objects ? obj.objects : [obj]).forEach(object => {
         if (object.render && !object.inactive) {
           object.render(this)
         }

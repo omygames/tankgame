@@ -36,8 +36,8 @@ class TankGameEngine extends Game {
             this.onPushClientEvent({
               type: 'tank_injured',
               meta: {
-                uid: player.id
-              }
+                uid: player.id,
+              },
             })
           }
         })
@@ -48,13 +48,23 @@ class TankGameEngine extends Game {
     switch (tank.direction) {
       case 0:
       case 1:
-        if (bullet.x >= tank.x && bullet.x <= tank.x + 20 && bullet.y >= tank.y - 1 && bullet.y <= tank.y + 22) {
+        if (
+          bullet.x >= tank.x &&
+          bullet.x <= tank.x + 20 &&
+          bullet.y >= tank.y - 1 &&
+          bullet.y <= tank.y + 22
+        ) {
           return true
         }
         break
       case 2:
       case 3:
-        if (bullet.x >= tank.x - 1 && bullet.x <= tank.x + 22 && bullet.y >= tank.y && bullet.y <= tank.y + 20) {
+        if (
+          bullet.x >= tank.x - 1 &&
+          bullet.x <= tank.x + 22 &&
+          bullet.y >= tank.y &&
+          bullet.y <= tank.y + 20
+        ) {
           return true
         }
         break
@@ -78,7 +88,7 @@ class TankGameEngine extends Game {
     const tank = new Tank({
       ...defaultTank,
       x: meta.x,
-      y: meta.y
+      y: meta.y,
     })
     if (this.self.id === id) {
       this.tank = tank
@@ -87,7 +97,7 @@ class TankGameEngine extends Game {
       ...player,
       game: {
         tank,
-      }
+      },
     })
   }
 
@@ -100,6 +110,11 @@ class TankGameEngine extends Game {
       case 'tank_move': {
         const player = this.findPlayerById(meta.uid)
         player.game.tank.move(payload)
+        break
+      }
+      case 'tank_stop': {
+        const player = this.findPlayerById(meta.uid)
+        player.game.tank.stop()
         break
       }
       case 'tank_injured': {
@@ -121,16 +136,15 @@ class TankGameEngine extends Game {
     }
   }
 
-  generateSelfEvent = (event) => {
+  generateSelfEvent = event => {
     return {
       ...event,
       meta: {
         uid: this.self.id,
-        timestamp: new Date().valueOf()
-      }
+        timestamp: new Date().valueOf(),
+      },
     }
   }
-
 }
 
 export default TankGameEngine
