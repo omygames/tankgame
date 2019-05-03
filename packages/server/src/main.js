@@ -1,34 +1,22 @@
-require('dotenv').config()
-const gameSocket = require('./game/gameSocket')
-const app = require('./app')
+// @ts-check
+import http from 'http'
+import gameSocket from './game/gameSocket'
+import app from './app'
 const debug = require('debug')('fps:server')
-const http = require('http')
 
-const port = normalizePort(process.env.PORT || '9000')
-app.set('port', port)
-
-const server = http.createServer(app)
-gameSocket(server)
-
-server.listen(port)
-server.on('error', onError)
-server.on('listening', onListening)
-
-function normalizePort(val) {
-  const port = parseInt(val, 10) // eslint-disable-line
+const normalizePort = val => {
+  const port = parseInt(val, 10)
 
   if (isNaN(port)) {
     return val
   }
-
   if (port >= 0) {
     return port
   }
-
   return false
 }
 
-function onError(error) {
+const onError = error => {
   if (error.syscall !== 'listen') {
     throw error
   }
@@ -49,8 +37,18 @@ function onError(error) {
   }
 }
 
-function onListening() {
+const onListening = () => {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
   debug('Listening on ' + bind)
 }
+
+const port = normalizePort(process.env.PORT || '9000')
+app.set('port', port)
+
+const server = http.createServer(app)
+gameSocket(server)
+
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
