@@ -1,14 +1,10 @@
 import React, { Component } from 'react'
-import PT from 'prop-types'
-import './Pool.css'
-import guid from '../../utils/guid'
+import './InfoPanel.css'
+import { guid } from '../../../utils/utils'
+import getSocket from '../../../helpers/getSocket'
 
-class Pool extends Component {
-  static propTypes = {
-    socket: PT.object.isRequired,
-  }
-
-  socket = this.props.socket
+class InfoPanel extends Component {
+  socket = getSocket()
 
   state = {
     onlinePlayerCount: 0,
@@ -30,7 +26,6 @@ class Pool extends Component {
     this.socket.emit('s_ping', lastPing)
     this.socket.on('s_pong', data => {
       if (data.uuid === lastPing.uuid) {
-        // const ping = data.receivedAt - lastPing.emittedAt
         const ping = new Date().valueOf() - lastPing.emittedAt
         this.setState({
           ping,
@@ -48,13 +43,20 @@ class Pool extends Component {
   render() {
     const { onlinePlayerCount, ping } = this.state
     return (
-      <div className="info-bar">
-        <span>{onlinePlayerCount} 个玩家在线</span>
-        <span className="sep">|</span>
+      <div className="info-panel">
+        <span>{onlinePlayerCount} players</span>
+        <span
+          style={{
+            display: 'inline-block',
+            margin: '0 10px',
+          }}
+        >
+          |
+        </span>
         <span>ping: {ping}</span>
       </div>
     )
   }
 }
 
-export default Pool
+export default InfoPanel
