@@ -6,7 +6,6 @@ const logger = require('morgan')
 const debug = require('debug')('fps:server:app')
 
 const indexRouter = require('./routes/index')
-const usersRouter = require('./routes/users')
 
 const app = express()
 
@@ -19,20 +18,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
-// url rewrite
-app.use((req, res, next) => {
-  debug(req.url)
-  if (req.url === '/tank/' || req.url === '/tank') {
-    req.url = '/'
-  }
-  next()
-})
-
 app.use(express.static(path.resolve(__dirname, '../../client/build')))
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
