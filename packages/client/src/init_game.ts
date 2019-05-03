@@ -3,6 +3,8 @@ import { Scene } from './engine/scene'
 import { Tank } from './game_objects/tank'
 import initUI from './init_ui'
 
+const DIRECTION_KEYS = ['w', 's', 'a', 'd']
+
 const initGame = () => {
   if (document.getElementById('game-canvas')) {
     return
@@ -24,7 +26,7 @@ const initGame = () => {
   scene.update()
 
   let directionKeysDown = []
-  const DIRECTION_KEYS = ['w', 's', 'a', 'd']
+  let showChat = false
 
   const updateTankV = (x, y) => {
     tank.velocity.x = x
@@ -49,6 +51,10 @@ const initGame = () => {
     }
   }
 
+  const updateUI = () => {
+    initUI({ showChat })
+  }
+
   // the game loop
   const updateFrame = () => {
     requestAnimationFrame(() => {
@@ -61,7 +67,12 @@ const initGame = () => {
   // setup listeners
   window.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
-      // TODO: 显示输入框
+      showChat = true
+      updateUI()
+    }
+    if (e.key === 'Escape') {
+      showChat = false
+      updateUI()
     }
     if (DIRECTION_KEYS.includes(e.key)) {
       directionKeysDown.push(e.key)
@@ -85,7 +96,7 @@ const initGame = () => {
   })
 
   // render game ui
-  initUI()
+  updateUI()
 }
 
 export default initGame
