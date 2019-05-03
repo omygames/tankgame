@@ -1,5 +1,4 @@
-console.log('works')
+import initGame from './init_game'
+import './base.css'
 
-const add = (a: number, b: number) => a + b
-
-add(1, 2)
+initGame()

@@ -1,8 +1,9 @@
 {
   "name": "tankgame",
   "version": "0.1.0",
-    "scripts": {
-    "start": "parcel public/index.html"
+  "scripts": {
+    "start": "parcel public/index.html",
+    "check-type": "tsc --watch "
   },
   "private": true,
   "dependencies": {
