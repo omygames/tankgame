@@ -10,8 +10,9 @@ const initGame = () => {
     return
   }
   const canvas = document.createElement('canvas')
-  canvas.style.width = '900px'
-  canvas.style.height = '600px'
+  // TODO: 产生了滚动条
+  canvas.style.width = window.innerWidth + 'px'
+  canvas.style.height = window.innerHeight + 'px'
   canvas.setAttribute('id', 'game-canvas')
   document.body.appendChild(canvas)
 
