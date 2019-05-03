@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { render } from 'react-dom'
-import InfoPanel from './ui/components/InfoPanel/InfoPanel'
-import Chat from './ui/components/Chat/Chat'
+import InfoPanel from './components/InfoPanel/InfoPanel'
+import Chat from './components/Chat/Chat'
 
 const GameUI = ({ showChat }) => {
   return (

@@ -1,7 +1,7 @@
 import { Graphics } from './engine/graphics'
 import { Scene } from './engine/scene'
 import { Tank } from './game_objects/tank'
-import initUI from './init_ui'
+import initUI from './ui/init_ui'
 
 const DIRECTION_KEYS = ['w', 's', 'a', 'd']
 
