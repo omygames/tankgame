@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import './InfoPanel.css'
 import { guid } from '../../../utils/utils'
-import getSocket from '../../../helpers/getSocket'
+import getSocket from '../../../helpers/get_socket'
 
 class InfoPanel extends Component {
   socket = getSocket()

@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import getSocketURI from './getSocketURI'
+import getSocketURI from './get_socket_uri'
 
 const debug = process.env.NODE_ENV !== 'production'
 

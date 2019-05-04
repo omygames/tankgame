@@ -18,6 +18,7 @@ export const createSocket = server => {
 
     const client = clientManager.add(socket)
     const context = { socket, io, client, clientManager }
+
     clientsSocket(context)
     chatSocket(context)
     pingSocket(context)

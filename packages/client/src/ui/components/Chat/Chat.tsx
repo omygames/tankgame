@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import './Chat.css'
-import getSocket from '../../../helpers/getSocket'
+import getSocket from '../../../helpers/get_socket'
 import { guid } from '../../../utils/utils'
 
 // const fakeData = _.times(20, n => {
