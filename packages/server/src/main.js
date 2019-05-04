@@ -1,8 +1,9 @@
 // @ts-check
+require('dotenv').config()
 import http from 'http'
-import gameSocket from './game/gameSocket'
+import { createSocket } from './web_sockets/socket'
 import app from './app'
-const debug = require('debug')('fps:server')
+const debug = require('debug')('tankgame:main')
 
 const normalizePort = val => {
   const port = parseInt(val, 10)
@@ -47,7 +48,7 @@ const port = normalizePort(process.env.PORT || '9000')
 app.set('port', port)
 
 const server = http.createServer(app)
-gameSocket(server)
+createSocket(server)
 
 server.listen(port)
 server.on('error', onError)

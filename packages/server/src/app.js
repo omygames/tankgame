@@ -2,11 +2,12 @@
 import createError from 'http-errors'
 import express from 'express'
 import path from 'path'
-import logger from 'morgan'
+// 用 import 会有莫名其妙的 deprecation warning
+const morgan = require('morgan')
 
 const app = express()
 
-app.use(logger('dev'))
+app.use(morgan('combined'))
 app.use(express.json())
 
 app.use(express.static(path.resolve(__dirname, '../../client/dist')))
