@@ -13,5 +13,11 @@ export class GameObject {
     this.rotation = new Rotation2d(0)
   }
 
-  draw() {}
+  draw() {
+    // impl in sub class
+  }
+
+  serialize() {
+    return this
+  }
 }

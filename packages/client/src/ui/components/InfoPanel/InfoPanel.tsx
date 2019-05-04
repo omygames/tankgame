@@ -12,7 +12,7 @@ class InfoPanel extends Component {
   }
 
   componentDidMount() {
-    this.socket.on('player_count_change', data => {
+    this.socket.on('client_count_change', data => {
       this.updatePlayerCount(data.count)
     })
     setInterval(this.updatePing, 1000)
@@ -44,7 +44,7 @@ class InfoPanel extends Component {
     const { onlinePlayerCount, ping } = this.state
     return (
       <div className="info-panel">
-        <span>{onlinePlayerCount} players</span>
+        <span>{onlinePlayerCount} clients connected</span>
         <span
           style={{
             display: 'inline-block',

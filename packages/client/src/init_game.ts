@@ -1,103 +1,97 @@
 import { Graphics } from './engine/graphics'
 import { Scene } from './engine/scene'
-import { Tank } from './game_objects/tank'
 import initUI from './ui/init_ui'
+import getSocket from './helpers/get_socket'
+import { Player } from './game_objects/player'
+import { GameSystem } from './game_system'
+import { guid } from './utils/utils'
+import { Control } from './control'
 
-const DIRECTION_KEYS = ['w', 's', 'a', 'd']
-
-const initGame = () => {
-  if (document.getElementById('game-canvas')) {
-    return
+const createCanvas = () => {
+  let canvas = document.getElementById('game-canvas') as HTMLCanvasElement
+  if (canvas) {
+    return canvas
   }
-  const canvas = document.createElement('canvas')
+  canvas = document.createElement('canvas')
   // TODO: 产生了滚动条
   canvas.style.width = window.innerWidth + 'px'
   canvas.style.height = window.innerHeight + 'px'
   canvas.setAttribute('id', 'game-canvas')
   document.body.appendChild(canvas)
+  return canvas
+}
 
-  const graphics = new Graphics(canvas)
-  const scene = new Scene(graphics)
-  const tank = new Tank(graphics)
-  tank.position.x = 20
-  tank.position.y = 20
-  tank.velocity.x = 0
-  tank.velocity.y = 0
-  scene.addObject(tank)
-  scene.update()
-
-  let directionKeysDown = []
-  let showChat = false
-
-  const updateTankV = (x, y) => {
-    tank.velocity.x = x
-    tank.velocity.y = y
-  }
-
-  const handleDirectionUpdate = directionKey => {
-    switch (directionKey) {
-      case 'w':
-        updateTankV(0, -1)
-        break
-      case 's':
-        updateTankV(0, 1)
-        break
-      case 'a':
-        updateTankV(-1, 0)
-        break
-      case 'd':
-        updateTankV(1, 0)
-      default:
-        break
-    }
-  }
-
+const initGame = () => {
   const updateUI = () => {
-    initUI({ showChat })
+    initUI(ui)
   }
 
-  // the game loop
-  const updateFrame = () => {
-    requestAnimationFrame(() => {
-      scene.update()
-      updateFrame()
+  const createPlayer = () => {
+    // TODO: 用户输入 name
+    const id = guid()
+    const player = new Player(id)
+    socket.emit('client_update', {
+      player,
+    })
+    return player
+  }
+
+  const handleJoinGame = () => {
+    ui.showJoin = false
+    updateUI()
+    gameSystem.addSelfTank()
+    socket.emit('join_game')
+    dispatch({
+      type: 'init_player',
+      payload: player,
     })
   }
-  updateFrame()
 
-  // setup listeners
-  window.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      showChat = true
+  const ui = {
+    showChat: false,
+    showJoin: true,
+    onJoin: handleJoinGame,
+  }
+  const socket = getSocket()
+  const dispatch = (action: Action) => {
+    socket.emit('dispatch_action', action)
+  }
+  const player = createPlayer()
+  const canvas = createCanvas()
+  const graphics = new Graphics(canvas)
+  const scene = new Scene(graphics)
+  const gameSystem = new GameSystem(graphics, scene, player)
+  const control = new Control()
+  let client
+
+  control
+    .on('show_chat_ui', show => {
+      ui.showChat = show
       updateUI()
-    }
-    if (e.key === 'Escape') {
-      showChat = false
-      updateUI()
-    }
-    if (DIRECTION_KEYS.includes(e.key)) {
-      directionKeysDown.push(e.key)
-      handleDirectionUpdate(e.key)
-    }
-  })
+    })
+    .on('update_tank_direction', directionKey => {
+      gameSystem.updateTankDirection(directionKey)
+      dispatch({
+        type: 'direction_update',
+        payload: directionKey,
+      })
+    })
+    .on('stop_tank', () => {
+      gameSystem.stopTank()
+      dispatch({
+        type: 'stop_tank',
+        payload: null,
+      })
+    })
+    .attachKeyboardEvents()
 
-  window.addEventListener('keyup', e => {
-    if (DIRECTION_KEYS.includes(e.key)) {
-      const lastDirection = directionKeysDown[directionKeysDown.length - 1]
-      directionKeysDown = directionKeysDown.filter(k => k !== e.key)
-      if (directionKeysDown.length === 0) {
-        updateTankV(0, 0)
-      } else {
-        const newDirection = directionKeysDown[directionKeysDown.length - 1]
-        if (newDirection !== lastDirection) {
-          handleDirectionUpdate(newDirection)
-        }
-      }
-    }
-  })
-
-  // render game ui
+  gameSystem.loop()
   updateUI()
+
+  socket.on('client_init', c => {
+    client = c
+  })
+  socket.on('receive_action', gameSystem.onReceiveAction)
 }
 
 export default initGame

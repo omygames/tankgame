@@ -1,18 +1,19 @@
 // @ts-check
 const debug = require('debug')('tankgame:clients.socket')
 
-const clientsSocket = ({ socket, io, client, clientManager }) => {
+const clientSocket = ({ socket, io, client, clientManager }) => {
   const updatePlayerCount = () => {
-    io.emit('player_count_change', {
+    io.emit('client_count_change', {
       count: clientManager.length,
     })
-    debug('player_count_change', clientManager.length)
+    debug('client_count_change', clientManager.length)
   }
-
-  socket.emit('player_init', client)
-  socket.broadcast.emit('player_join', client)
-
   updatePlayerCount()
+
+  socket.emit('client_init', client)
+  socket.on('client_update', clientInfo => {
+    Object.assign(client, clientInfo)
+  })
 
   socket.on('disconnect', () => {
     clientManager.delete(socket)
@@ -22,4 +23,4 @@ const clientsSocket = ({ socket, io, client, clientManager }) => {
   })
 }
 
-export default clientsSocket
+export default clientSocket

@@ -22,6 +22,10 @@ export class Scene {
     this.gameObjects.push(gameObject)
   }
 
+  removeObject(gameObject: GameObject) {
+    this.gameObjects = this.gameObjects.filter(obj => obj !== gameObject)
+  }
+
   update() {
     this.resetBg()
     this.gameObjects.forEach(gObj => {

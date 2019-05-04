@@ -3,11 +3,9 @@ import { ClientManager } from '../client_manager'
 import socketIO from 'socket.io'
 import chatSocket from './chat.socket'
 import pingSocket from './ping.socket'
-import clientsSocket from './clients.socket'
+import clientSocket from './client.socket'
+import gameSocket from './game.socket'
 const debug = require('debug')('tankgame:socket')
-// const syncSnakeGame = require('./snake/sync')
-// const syncTankGameStateSynced = require('./tankStateSynced/sync')
-// const syncTankGameFrameSynced = require('./tankFrameSynced/sync')
 
 export const createSocket = server => {
   const clientManager = new ClientManager()
@@ -19,13 +17,9 @@ export const createSocket = server => {
     const client = clientManager.add(socket)
     const context = { socket, io, client, clientManager }
 
-    clientsSocket(context)
+    clientSocket(context)
     chatSocket(context)
     pingSocket(context)
-
-    // games
-    // syncSnakeGame(socket, io)
-    // syncTankGameStateSynced(socket, io)
-    // syncTankGameFrameSynced(socket, io, client)
+    gameSocket(context)
   })
 }
