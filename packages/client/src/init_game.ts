@@ -14,8 +14,8 @@ const createCanvas = () => {
   }
   canvas = document.createElement('canvas')
   // TODO: 产生了滚动条
-  canvas.style.width = window.innerWidth + 'px'
-  canvas.style.height = window.innerHeight + 'px'
+  canvas.width = window.innerWidth
+  canvas.height = window.innerHeight
   canvas.setAttribute('id', 'game-canvas')
   document.body.appendChild(canvas)
   return canvas

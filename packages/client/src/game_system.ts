@@ -19,6 +19,7 @@ export class GameSystem {
   }
   scene: Scene
   graphics: Graphics
+  // loopSpeed: 1
 
   static updateTankVelocity(tank: Tank, x, y) {
     tank.velocity.x = x

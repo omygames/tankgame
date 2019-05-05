@@ -4,6 +4,7 @@ import { Graphics } from './graphics'
 export class Scene {
   gameObjects: GameObject[]
   graphics: Graphics
+  lastT: number
 
   constructor(graphics: Graphics) {
     this.graphics = graphics
@@ -27,11 +28,16 @@ export class Scene {
   }
 
   update() {
-    this.resetBg()
-    this.gameObjects.forEach(gObj => {
-      gObj.position.x += gObj.velocity.x
-      gObj.position.y += gObj.velocity.y
-      gObj.draw()
-    })
+    const currentT = new Date().valueOf()
+    if (this.lastT) {
+      const deltaT = currentT - this.lastT
+      this.resetBg()
+      this.gameObjects.forEach(gObj => {
+        gObj.position.x += gObj.velocity.x * deltaT
+        gObj.position.y += gObj.velocity.y * deltaT
+        gObj.draw()
+      })
+    }
+    this.lastT = new Date().valueOf()
   }
 }
