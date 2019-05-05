@@ -95,7 +95,6 @@ const initGame = () => {
     })
     .attachKeyboardEvents()
 
-  gameSystem.loop()
   updateUI()
 
   socket.on('client_init', c => {

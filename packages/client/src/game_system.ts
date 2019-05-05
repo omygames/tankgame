@@ -23,6 +23,8 @@ export class GameSystem {
   graphics: GraphicsContext
   renderer: Renderer
   logicFrame: LogicFrame
+  isReplaying: boolean
+  pendingActions: Action[]
 
   static updateTankVelocity(tank: Tank, x, y) {
     tank.velocity.x = x
@@ -42,6 +44,10 @@ export class GameSystem {
     this.players = {}
     this.renderer = renderer
     this.logicFrame = logicFrame
+    this.isReplaying = false
+    // 用于记录回放过程中接收到的 action，在回放完之后接着回放
+    // 直到 pendingActions 为空
+    this.pendingActions = []
   }
 
   loop() {
@@ -126,10 +132,48 @@ export class GameSystem {
     GameSystem.updateTankVelocity(tank, 0, 0)
   }
 
-  onReceiveAction = ({ type, payload, meta: { playerId } }) => {
+  replay(actions: Action[]) {
+    if (!actions.length) {
+      this.loop()
+      return
+    }
+    this.isReplaying = true
+    const playSpeedX = 3
+    const tickTime = this.logicFrame.frameTick / playSpeedX
+    const startTime = actions[0].meta.timestamp
+
+    actions.forEach((action, idx) => {
+      const t = action.meta.timestamp - startTime
+      setTimeout(() => {
+        this.playAction(action)
+        if (idx === actions.length - 1) {
+          clearInterval(tickInterval)
+          if (this.pendingActions.length !== 0) {
+            this.replay(this.pendingActions)
+            this.pendingActions = []
+          } else {
+            this.loop()
+            this.isReplaying = false
+          }
+        }
+      }, t / playSpeedX)
+    })
+
+    const tickInterval = setInterval(() => {
+      this.logicFrame.tick()
+      this.renderer.render()
+    }, tickTime)
+  }
+
+  playAction(action) {
+    const {
+      type,
+      payload,
+      meta: { playerId },
+    } = action
     switch (type) {
       case 'load_history':
-        payload.forEach(this.onReceiveAction)
+        this.replay(payload)
         break
 
       case 'init_player':
@@ -151,5 +195,13 @@ export class GameSystem {
       default:
         break
     }
+  }
+
+  onReceiveAction = (action: Action) => {
+    if (this.isReplaying) {
+      this.pendingActions.push(action)
+      return
+    }
+    this.playAction(action)
   }
 }
