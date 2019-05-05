@@ -1,16 +1,16 @@
-import { Graphics } from '../engine/graphics'
+import { GraphicsContext } from '../engine/graphics_context'
 import { GameObject } from '../engine/game_object'
 
 export class Tank extends GameObject {
-  graphics: Graphics
+  graphicsContext: GraphicsContext
 
-  constructor(graphics: Graphics) {
+  constructor(graphicsContext: GraphicsContext) {
     super()
-    this.graphics = graphics
+    this.graphicsContext = graphicsContext
   }
 
   draw() {
-    const ctx = this.graphics.ctx
+    const ctx = this.graphicsContext.ctx
     ctx.save()
     ctx.fillStyle = 'red'
     const { x, y } = this.position

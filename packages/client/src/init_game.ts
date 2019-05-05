@@ -1,4 +1,4 @@
-import { Graphics } from './engine/graphics'
+import { GraphicsContext } from './engine/graphics_context'
 import { Scene } from './engine/scene'
 import initUI from './ui/init_ui'
 import getSocket from './helpers/get_socket'
@@ -6,6 +6,8 @@ import { Player } from './game_objects/player'
 import { GameSystem } from './game_system'
 import { guid } from './utils/utils'
 import { Control } from './control'
+import { Renderer } from './engine/renderer'
+import { LogicFrame } from './engine/logic_frame'
 
 const createCanvas = () => {
   let canvas = document.getElementById('game-canvas') as HTMLCanvasElement
@@ -58,9 +60,17 @@ const initGame = () => {
   }
   const player = createPlayer()
   const canvas = createCanvas()
-  const graphics = new Graphics(canvas)
+  const graphics = new GraphicsContext(canvas)
   const scene = new Scene(graphics)
-  const gameSystem = new GameSystem(graphics, scene, player)
+  const renderer = new Renderer(graphics, scene)
+  const logicFrame = new LogicFrame(scene)
+  const gameSystem = new GameSystem(
+    graphics,
+    scene,
+    player,
+    renderer,
+    logicFrame
+  )
   const control = new Control()
   let client
 

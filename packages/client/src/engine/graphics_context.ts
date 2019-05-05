@@ -1,4 +1,4 @@
-export class Graphics {
+export class GraphicsContext {
   canvas: HTMLCanvasElement
 
   constructor(canvas: HTMLCanvasElement) {

@@ -1,7 +1,9 @@
 import { Player } from './game_objects/player'
 import { Tank } from './game_objects/tank'
 import { Scene } from './engine/scene'
-import { Graphics } from './engine/graphics'
+import { GraphicsContext } from './engine/graphics_context'
+import { Renderer } from './engine/renderer'
+import { LogicFrame } from './engine/logic_frame'
 
 const createTank = ({ x, y, vx, vy, graphics }) => {
   const tank = new Tank(graphics)
@@ -18,30 +20,42 @@ export class GameSystem {
     [id: string]: Player
   }
   scene: Scene
-  graphics: Graphics
-  // loopSpeed: 1
+  graphics: GraphicsContext
+  renderer: Renderer
+  logicFrame: LogicFrame
 
   static updateTankVelocity(tank: Tank, x, y) {
     tank.velocity.x = x
     tank.velocity.y = y
   }
 
-  constructor(graphics: Graphics, scene: Scene, player: Player) {
+  constructor(
+    graphics: GraphicsContext,
+    scene: Scene,
+    player: Player,
+    renderer: Renderer,
+    logicFrame: LogicFrame
+  ) {
     this.graphics = graphics
     this.scene = scene
     this.player = player
     this.players = {}
-  }
-
-  update() {
-    this.scene.update()
+    this.renderer = renderer
+    this.logicFrame = logicFrame
   }
 
   loop() {
-    requestAnimationFrame(() => {
-      this.update()
-      this.loop()
-    })
+    const render = () => {
+      requestAnimationFrame(() => {
+        this.renderer.render()
+        render()
+      })
+    }
+    render()
+
+    setInterval(() => {
+      this.logicFrame.tick()
+    }, this.logicFrame.frameTick)
   }
 
   initPlayer(player) {
@@ -89,18 +103,19 @@ export class GameSystem {
 
   updateTankDirection(directionKey, playerId?: string) {
     const tank = this.getTank(playerId)
+    const tankSpeed = 100 // px/s
     switch (directionKey) {
       case 'w':
-        GameSystem.updateTankVelocity(tank, 0, -1)
+        GameSystem.updateTankVelocity(tank, 0, -tankSpeed)
         break
       case 's':
-        GameSystem.updateTankVelocity(tank, 0, 1)
+        GameSystem.updateTankVelocity(tank, 0, tankSpeed)
         break
       case 'a':
-        GameSystem.updateTankVelocity(tank, -1, 0)
+        GameSystem.updateTankVelocity(tank, -tankSpeed, 0)
         break
       case 'd':
-        GameSystem.updateTankVelocity(tank, 1, 0)
+        GameSystem.updateTankVelocity(tank, tankSpeed, 0)
       default:
         break
     }
