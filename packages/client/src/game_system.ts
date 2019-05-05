@@ -118,9 +118,11 @@ export class GameSystem {
         GameSystem.updateTankVelocity(tank, 0, tankSpeed)
         break
       case 'a':
+        // tank.wheelRotation.rotation = 30
         GameSystem.updateTankVelocity(tank, -tankSpeed, 0)
         break
       case 'd':
+        // tank.wheelRotation.rotation = -30
         GameSystem.updateTankVelocity(tank, tankSpeed, 0)
       default:
         break
