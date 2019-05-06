@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 const DIRECTION_KEYS = ['w', 's']
 const TURN_KEYS = ['a', 'd']
 
@@ -59,12 +61,14 @@ export class Control {
         this.onShowChatUI(false)
       }
       if (DIRECTION_KEYS.includes(e.key)) {
+        if (_.last(this.directionKeysDown) === e.key) {
+          return
+        }
         this.directionKeysDown.push(e.key)
         this.onUpdateTankDirection(e.key)
       }
       if (TURN_KEYS.includes(e.key)) {
         this.turnKeysDown.push(e.key)
-
         this.onUpdateTankTurn(turnMap[e.key])
       }
     })

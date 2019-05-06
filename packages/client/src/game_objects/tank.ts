@@ -18,26 +18,30 @@ export class Tank extends GameObject {
     this.graphicsContext = graphicsContext
     this.wheelRotation = new Rotation2d(0)
     this.rotationSpeed = 0
+    this.direction = 0
   }
 
   tick(frameTick) {
+    this.velocity.y =
+      Tank.maxSpeed * Math.sin(this.wheelRotation.rotation) * this.direction
+    this.velocity.x =
+      Tank.maxSpeed * Math.cos(this.wheelRotation.rotation) * this.direction
+
     this.position.x += (this.velocity.x * frameTick) / 1000
     this.position.y += (this.velocity.y * frameTick) / 1000
     this.wheelRotation.rotation += (this.rotationSpeed * frameTick) / 1000
   }
 
   goForward() {
-    this.velocity.y = Tank.maxSpeed * Math.sin(this.wheelRotation.rotation)
-    this.velocity.x = Tank.maxSpeed * Math.cos(this.wheelRotation.rotation)
+    this.direction = 1
   }
 
   goBackward() {
-    this.velocity.y = -Tank.maxSpeed * Math.sin(this.wheelRotation.rotation)
-    this.velocity.x = -Tank.maxSpeed * Math.cos(this.wheelRotation.rotation)
+    this.direction = -1
   }
 
   stopMoving() {
-    this.velocity.reset()
+    this.direction = 0
   }
 
   turnLef() {
