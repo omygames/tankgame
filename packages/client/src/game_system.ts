@@ -30,11 +30,6 @@ export class GameSystem {
   playedActions: Action[]
   frameIndex: number
 
-  static updateTankVelocity(tank: Tank, x, y) {
-    tank.velocity.x = x
-    tank.velocity.y = y
-  }
-
   constructor(
     graphics: GraphicsContext,
     scene: Scene,
@@ -88,8 +83,8 @@ export class GameSystem {
   }
 
   addSelfTank() {
-    const x = 20
-    const y = 20
+    const x = 100
+    const y = 100
     const vx = 0
     const vy = 0
     const tank = createTank({ x, y, vx, vy, graphics: this.graphics })
@@ -115,21 +110,18 @@ export class GameSystem {
 
   updateTankDirection(directionKey, playerId?: string) {
     const tank = this.getTank(playerId)
-    const tankSpeed = 100 // px/s
     switch (directionKey) {
       case 'w':
-        GameSystem.updateTankVelocity(tank, 0, -tankSpeed)
+        tank.goForward()
         break
       case 's':
-        GameSystem.updateTankVelocity(tank, 0, tankSpeed)
+        tank.goBackward()
         break
       case 'a':
-        // tank.wheelRotation.rotation = 30
-        GameSystem.updateTankVelocity(tank, -tankSpeed, 0)
+        tank.turnLef()
         break
       case 'd':
-        // tank.wheelRotation.rotation = -30
-        GameSystem.updateTankVelocity(tank, tankSpeed, 0)
+        tank.turnRight()
       default:
         break
     }
@@ -137,7 +129,27 @@ export class GameSystem {
 
   stopTank(playerId?: string) {
     const tank = this.getTank(playerId)
-    GameSystem.updateTankVelocity(tank, 0, 0)
+    tank.stopMoving()
+  }
+
+  updateTankTurn(turn: string, playerId?: string) {
+    const tank = this.getTank(playerId)
+    switch (turn) {
+      case 'left':
+        tank.turnLef()
+        break
+
+      case 'right':
+        tank.turnRight()
+        break
+
+      case 'stop':
+        tank.stopTurning()
+        break
+
+      default:
+        throw new Error(`unknown turn: ${turn} found`)
+    }
   }
 
   replay(actions: Action[]) {
@@ -212,6 +224,10 @@ export class GameSystem {
 
       case 'stop_tank':
         this.stopTank(playerId)
+        break
+
+      case 'update_tank_turn':
+        this.updateTankTurn(payload, playerId)
         break
 
       case 'direction_update':

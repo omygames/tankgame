@@ -17,6 +17,10 @@ export class GameObject {
     // impl in sub class
   }
 
+  tick(frameTick: number) {
+    // impl in sub class
+  }
+
   serialize() {
     return this
   }

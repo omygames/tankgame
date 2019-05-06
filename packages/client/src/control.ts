@@ -1,16 +1,32 @@
-const DIRECTION_KEYS = ['w', 's', 'a', 'd']
+const DIRECTION_KEYS = ['w', 's']
+const TURN_KEYS = ['a', 'd']
+
+const turnMap = {
+  a: 'left',
+  d: 'right',
+}
 
 export class Control {
   onShowChatUI: (show: boolean) => void
   onUpdateTankDirection: (direction: string) => void
   onTankStop: () => void
+  onUpdateTankTurn: (turn: string) => void
   directionKeysDown: string[]
+  turnKeysDown: string[]
 
   constructor() {
     this.directionKeysDown = []
+    this.turnKeysDown = []
   }
 
-  on(event: 'show_chat_ui' | 'update_tank_direction' | 'stop_tank', callback) {
+  on(
+    event:
+      | 'show_chat_ui'
+      | 'update_tank_direction'
+      | 'stop_tank'
+      | 'update_tank_turn',
+    callback
+  ) {
     switch (event) {
       case 'show_chat_ui':
         this.onShowChatUI = callback
@@ -22,6 +38,10 @@ export class Control {
 
       case 'stop_tank':
         this.onTankStop = callback
+        break
+
+      case 'update_tank_turn':
+        this.onUpdateTankTurn = callback
         break
 
       default:
@@ -42,6 +62,11 @@ export class Control {
         this.directionKeysDown.push(e.key)
         this.onUpdateTankDirection(e.key)
       }
+      if (TURN_KEYS.includes(e.key)) {
+        this.turnKeysDown.push(e.key)
+
+        this.onUpdateTankTurn(turnMap[e.key])
+      }
     })
 
     window.addEventListener('keyup', e => {
@@ -58,6 +83,19 @@ export class Control {
           ]
           if (newDirection !== lastDirection) {
             this.onUpdateTankDirection(newDirection)
+          }
+        }
+      }
+      // TODO: 能否简化代码
+      if (TURN_KEYS.includes(e.key)) {
+        const lastDirection = this.turnKeysDown[this.turnKeysDown.length - 1]
+        this.turnKeysDown = this.turnKeysDown.filter(k => k !== e.key)
+        if (this.turnKeysDown.length === 0) {
+          this.onUpdateTankTurn('stop')
+        } else {
+          const newDirection = this.turnKeysDown[this.turnKeysDown.length - 1]
+          if (newDirection !== lastDirection) {
+            this.onUpdateTankTurn(turnMap[newDirection])
           }
         }
       }

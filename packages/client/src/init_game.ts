@@ -98,6 +98,13 @@ const initGame = () => {
         payload: null,
       })
     })
+    .on('update_tank_turn', turn => {
+      gameSystem.updateTankTurn(turn)
+      dispatch({
+        type: 'update_tank_turn',
+        payload: turn,
+      })
+    })
     .attachKeyboardEvents()
 
   updateUI()
@@ -106,6 +113,12 @@ const initGame = () => {
     client = c
   })
   socket.on('receive_action', gameSystem.onReceiveAction)
+
+  // @ts-ignore
+  window.__debug__ = () => {
+    console.log(gameSystem)
+    console.log(gameSystem.player.tank)
+  }
 }
 
 export default initGame

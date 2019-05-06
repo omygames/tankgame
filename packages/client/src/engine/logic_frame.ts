@@ -11,8 +11,12 @@ export class LogicFrame {
 
   tick() {
     this.scene.gameObjects.forEach(gObj => {
-      gObj.position.x += (gObj.velocity.x * this.frameTick) / 1000
-      gObj.position.y += (gObj.velocity.y * this.frameTick) / 1000
+      if (typeof gObj.tick === 'function') {
+        gObj.tick(this.frameTick)
+      } else {
+        gObj.position.x += (gObj.velocity.x * this.frameTick) / 1000
+        gObj.position.y += (gObj.velocity.y * this.frameTick) / 1000
+      }
     })
   }
 }
