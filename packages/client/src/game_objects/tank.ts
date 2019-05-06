@@ -56,25 +56,22 @@ export class Tank extends GameObject {
     const ctx = this.graphicsContext.ctx
     const { x, y } = this.position
     ctx.save()
-
     ctx.translate(x + 10, y + 11)
-    ctx.rotate(this.wheelRotation.rotation)
+    ctx.rotate(this.wheelRotation.rotation + Math.PI / 2)
     ctx.translate(-(x + 10), -(y + 11))
 
     ctx.fillStyle = '#300ccf'
     ctx.fillRect(x, y - 1, 5, 22)
     ctx.fillRect(x + 15, y - 1, 5, 22)
     ctx.fillRect(x + 6, y, 8, 20)
-    // ctx.rotate(-(45 * Math.PI) / 180)
-    ctx.restore()
-    ctx.save()
-
     ctx.strokeStyle = '#085a91'
     ctx.lineWidth = 3
     ctx.moveTo(x + 10, y + 5)
     ctx.lineTo(x + 10, y - 5)
     ctx.stroke()
+    ctx.restore()
 
+    ctx.save()
     ctx.fillStyle = '#0c81cf'
     ctx.beginPath()
     ctx.arc(x + 10, y + 10, 3, 0, Math.PI * 2, true)
