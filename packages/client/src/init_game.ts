@@ -56,7 +56,12 @@ const initGame = () => {
   }
   const socket = getSocket()
   const dispatch = (action: Action) => {
-    socket.emit('dispatch_action', action)
+    socket.emit('dispatch_action', {
+      ...action,
+      meta: {
+        frameIndex: gameSystem.frameIndex,
+      },
+    })
   }
   const player = createPlayer()
   const canvas = createCanvas()

@@ -17,9 +17,9 @@ const clientSocket = ({ socket, io, client, clientManager }) => {
 
   socket.on('disconnect', () => {
     clientManager.delete(socket)
-    debug('disconnect')
     updatePlayerCount()
     socket.broadcast.emit('player_leave', client)
+    debug('player_leave')
   })
 }
 
