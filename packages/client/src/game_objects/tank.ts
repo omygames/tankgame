@@ -12,8 +12,9 @@ export class Tank extends GameObject {
   direction: number
   rotationSpeed: number
   // TODO: 会不会循环引用
-  onHitByShell: (shell: Shell) => void
+  onHitByShell?: (shell: Shell) => void
   rigidBody: RigidBody
+  health: number
 
   static maxSpeed = 100 // px/s
   static maxRotationSpeed = Math.PI / 4 // rad/s 正值为顺时针
@@ -24,13 +25,24 @@ export class Tank extends GameObject {
     this.wheelRotation = new Rotation2d(0)
     this.rotationSpeed = 0
     this.direction = 0
+    this.health = 100
     // rigidBody 和 tank 用了同一个 position 实例，不知道会不会产生问题
     this.rigidBody = new RigidBody(11, this.position)
     this.rigidBody.onCollide = obj => {
       if (obj instanceof SimpleBasicShell && obj.from !== this) {
         obj.toBeDestroyed = true
         debug('collided', obj)
+        if (this.onHitByShell) {
+          this.onHitByShell(obj)
+        }
       }
+    }
+  }
+
+  takeDamage(damage: number) {
+    this.health -= damage
+    if (this.health <= 0) {
+      this.toBeDestroyed = true
     }
   }
 
@@ -97,5 +109,9 @@ export class Tank extends GameObject {
     ctx.closePath()
     ctx.fill()
     ctx.restore()
+    this.graphicsContext.drawText({
+      text: `${this.health}`,
+      position: this.position,
+    })
   }
 }

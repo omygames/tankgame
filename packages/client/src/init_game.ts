@@ -77,7 +77,14 @@ const initGame = () => {
     logicFrame
   )
   const control = new Control()
-  let client
+
+  gameSystem.onSelfTankTakeDamage = damage => {
+    gameSystem.tankTakeDamage(damage)
+    dispatch({
+      type: 'tank_take_damage',
+      payload: damage,
+    })
+  }
 
   control
     .on('show_chat_ui', show => {
@@ -116,6 +123,7 @@ const initGame = () => {
 
   updateUI()
 
+  let client
   socket.on('client_init', c => {
     client = c
   })

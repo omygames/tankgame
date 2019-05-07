@@ -7,6 +7,7 @@ import { RigidBody } from '../engine/rigid_body'
 export class Shell extends GameObject {
   from: Tank
   rigidBody: RigidBody
+  damage: number
 }
 
 export class SimpleBasicShell extends Shell {
@@ -20,6 +21,7 @@ export class SimpleBasicShell extends Shell {
 
   constructor(graphicsContext: GraphicsContext, startPosition: Position2d) {
     super()
+    this.damage = 20
     this.color = 'red'
     this.graphicsContext = graphicsContext
     this.startPosition = startPosition

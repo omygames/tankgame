@@ -30,6 +30,7 @@ export class GameSystem {
   pendingActions: Action[]
   playedActions: Action[]
   frameIndex: number
+  onSelfTankTakeDamage: (damage: number) => void
 
   constructor(
     graphicsContext: GraphicsContext,
@@ -96,6 +97,9 @@ export class GameSystem {
       graphics: this.graphicsContext,
     })
     this.player.tank = tank
+    tank.onHitByShell = shell => {
+      this.onSelfTankTakeDamage(shell.damage)
+    }
     this.scene.addObject(tank)
   }
 
@@ -113,6 +117,11 @@ export class GameSystem {
       tank = this.players[playerId].tank
     }
     return tank
+  }
+
+  tankTakeDamage(damage: number, playerId?: string) {
+    const tank = this.getTank(playerId)
+    tank.takeDamage(damage)
   }
 
   tankFire(playerId?: string) {
@@ -234,6 +243,10 @@ export class GameSystem {
 
       case 'tank_fire':
         this.tankFire(playerId)
+        break
+
+      case 'tank_take_damage':
+        this.tankTakeDamage(payload, playerId)
         break
 
       case 'init_player':
