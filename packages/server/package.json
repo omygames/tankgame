@@ -6,7 +6,7 @@
     "start": "yarn start:win",
     "start:win": "set DEBUG=tankgame:* & nodemon -r esm src/main.js",
     "start:mac": "DEBUG=tankgame:* nodemon -r esm src/main.js",
-    "start:prod": "node -r esm src/main.js"
+    "start:prod": "DEBUG=tankgame:* node -r esm src/main.js"
   },
   "dependencies": {
     "debug": "^4.1.1",
