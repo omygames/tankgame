@@ -116,16 +116,34 @@ export class GameSystem {
     } else if (this.players[playerId]) {
       tank = this.players[playerId].tank
     }
+    if (tank && tank.toBeDestroyed) {
+      return null
+    }
     return tank
   }
 
   tankTakeDamage(damage: number, playerId?: string) {
     const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
     tank.takeDamage(damage)
+  }
+
+  destroyTank(playerId?: string) {
+    const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
+    // TODO: impl
   }
 
   tankFire(playerId?: string) {
     const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
+    debug('tankFire', tank)
     // TODO: 添加 weapon 逻辑
     const shell = new SimpleBasicShell(this.graphicsContext, tank.position)
     shell.from = tank
@@ -138,6 +156,9 @@ export class GameSystem {
 
   updateTankDirection(directionKey, playerId?: string) {
     const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
     switch (directionKey) {
       case 'w':
         tank.goForward()
@@ -152,11 +173,17 @@ export class GameSystem {
 
   stopTank(playerId?: string) {
     const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
     tank.stopMoving()
   }
 
   updateTankTurn(turn: string, playerId?: string) {
     const tank = this.getTank(playerId)
+    if (!tank) {
+      return
+    }
     switch (turn) {
       case 'left':
         tank.turnLef()

@@ -1,5 +1,4 @@
 import { Scene } from './scene'
-import { Position2d } from './position'
 import { RigidBody } from './rigid_body'
 
 export class LogicFrame {
