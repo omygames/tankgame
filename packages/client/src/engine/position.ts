@@ -5,4 +5,10 @@ export class Position2d {
     this.x = x
     this.y = y
   }
+
+  assign(position: Position2d) {
+    this.x = position.x
+    this.y = position.y
+    return this
+  }
 }

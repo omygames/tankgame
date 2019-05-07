@@ -5,6 +5,7 @@ import { GraphicsContext } from './engine/graphics_context'
 import { Renderer } from './engine/renderer'
 import { LogicFrame } from './engine/logic_frame'
 import _ from 'lodash'
+import { SimpleBasicShell } from './game_objects/shell'
 const debug = require('debug')('tankgame:game_system')
 
 const createTank = ({ x, y, vx, vy, graphics }) => {
@@ -22,7 +23,7 @@ export class GameSystem {
     [id: string]: Player
   }
   scene: Scene
-  graphics: GraphicsContext
+  graphicsContext: GraphicsContext
   renderer: Renderer
   logicFrame: LogicFrame
   isReplaying: boolean
@@ -31,13 +32,13 @@ export class GameSystem {
   frameIndex: number
 
   constructor(
-    graphics: GraphicsContext,
+    graphicsContext: GraphicsContext,
     scene: Scene,
     player: Player,
     renderer: Renderer,
     logicFrame: LogicFrame
   ) {
-    this.graphics = graphics
+    this.graphicsContext = graphicsContext
     this.scene = scene
     this.player = player
     this.players = {}
@@ -76,7 +77,7 @@ export class GameSystem {
       y: tank.position.y,
       vx: tank.velocity.x,
       vy: tank.velocity.y,
-      graphics: this.graphics,
+      graphics: this.graphicsContext,
     })
     this.scene.addObject(_tank)
     return _tank
@@ -87,7 +88,13 @@ export class GameSystem {
     const y = 100
     const vx = 0
     const vy = 0
-    const tank = createTank({ x, y, vx, vy, graphics: this.graphics })
+    const tank = createTank({
+      x,
+      y,
+      vx,
+      vy,
+      graphics: this.graphicsContext,
+    })
     this.player.tank = tank
     this.scene.addObject(tank)
   }
@@ -106,6 +113,19 @@ export class GameSystem {
       tank = this.players[playerId].tank
     }
     return tank
+  }
+
+  tankFire(playerId?: string) {
+    const tank = this.getTank(playerId)
+    // TODO: 添加 weapon 逻辑
+    const shell = new SimpleBasicShell(this.graphicsContext)
+    shell.from = tank
+    shell.position.assign(tank.position)
+    shell.velocity.x =
+      SimpleBasicShell.maxSpeed * Math.cos(tank.wheelRotation.rotation)
+    shell.velocity.y =
+      SimpleBasicShell.maxSpeed * Math.sin(tank.wheelRotation.rotation)
+    this.scene.addObject(shell)
   }
 
   updateTankDirection(directionKey, playerId?: string) {
@@ -217,6 +237,10 @@ export class GameSystem {
         }
         break
       }
+
+      case 'tank_fire':
+        this.tankFire(playerId)
+        break
 
       case 'init_player':
         this.initPlayer(payload)

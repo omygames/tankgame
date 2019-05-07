@@ -18,7 +18,8 @@ export class GameObject {
   }
 
   tick(frameTick: number) {
-    // impl in sub class
+    this.position.x += (this.velocity.x * frameTick) / 1000
+    this.position.y += (this.velocity.y * frameTick) / 1000
   }
 
   serialize() {

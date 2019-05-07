@@ -13,6 +13,7 @@ export class Control {
   onUpdateTankDirection: (direction: string) => void
   onTankStop: () => void
   onUpdateTankTurn: (turn: string) => void
+  onTankFire: () => void
   directionKeysDown: string[]
   turnKeysDown: string[]
 
@@ -24,6 +25,7 @@ export class Control {
   on(
     event:
       | 'show_chat_ui'
+      | 'tank_fire'
       | 'update_tank_direction'
       | 'stop_tank'
       | 'update_tank_turn',
@@ -46,6 +48,10 @@ export class Control {
         this.onUpdateTankTurn = callback
         break
 
+      case 'tank_fire':
+        this.onTankFire = callback
+        break
+
       default:
         throw new Error(`Unknown event ${event}`)
     }
@@ -59,6 +65,9 @@ export class Control {
       }
       if (e.key === 'Escape') {
         this.onShowChatUI(false)
+      }
+      if (e.key === 'j') {
+        this.onTankFire()
       }
       if (DIRECTION_KEYS.includes(e.key)) {
         if (_.last(this.directionKeysDown) === e.key) {

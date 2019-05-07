@@ -84,6 +84,13 @@ const initGame = () => {
       ui.showChat = show
       updateUI()
     })
+    .on('tank_fire', () => {
+      gameSystem.tankFire()
+      dispatch({
+        type: 'tank_fire',
+        payload: null,
+      })
+    })
     .on('update_tank_direction', directionKey => {
       gameSystem.updateTankDirection(directionKey)
       dispatch({
