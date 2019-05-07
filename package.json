@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "start": "cd packages/client && yarn start",
+    "check-type": "cd packages/client && yarn check-type",
     "start:prod": "cd packages/server && yarn start:prod",
     "build": "yarn build:client",
     "build:client": "cd packages/client && yarn build",
-    "server": "cd packages/server && yarn start"
+    "server": "cd packages/server && yarn start",
+    "server:mac": "cd packages/server && yarn start:mac"
   },
   "private": true,
   "repository": "git@github.com:gaoxiaoliangz/tankgame.git",
