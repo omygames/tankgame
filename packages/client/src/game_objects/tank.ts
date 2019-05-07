@@ -1,6 +1,8 @@
 import { GraphicsContext } from '../engine/graphics_context'
 import { GameObject } from '../engine/game_object'
 import { Rotation2d } from '../engine/rotation'
+import { Shell, SimpleBasicShell } from './shell'
+import { RigidBody } from '../engine/rigid_body'
 const debug = require('debug')('tankgame:tank')
 
 export class Tank extends GameObject {
@@ -9,6 +11,9 @@ export class Tank extends GameObject {
   wheelRotation: Rotation2d
   direction: number
   rotationSpeed: number
+  // TODO: 会不会循环引用
+  onHitByShell: (shell: Shell) => void
+  rigidBody: RigidBody
 
   static maxSpeed = 100 // px/s
   static maxRotationSpeed = Math.PI / 4 // rad/s 正值为顺时针
@@ -19,6 +24,14 @@ export class Tank extends GameObject {
     this.wheelRotation = new Rotation2d(0)
     this.rotationSpeed = 0
     this.direction = 0
+    // rigidBody 和 tank 用了同一个 position 实例，不知道会不会产生问题
+    this.rigidBody = new RigidBody(11, this.position)
+    this.rigidBody.onCollide = obj => {
+      if (obj instanceof SimpleBasicShell && obj.from !== this) {
+        obj.toBeDestroyed = true
+        debug('collided', obj)
+      }
+    }
   }
 
   tick(frameTick) {
@@ -57,6 +70,8 @@ export class Tank extends GameObject {
   }
 
   draw() {
+    // TODO: 修复中心偏移的问题，目前 rigidBody 以 position 为圆心
+    // 中心偏移 rigidBody 也会偏移
     const ctx = this.graphicsContext.ctx
     const { x, y } = this.position
     ctx.save()

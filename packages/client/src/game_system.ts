@@ -136,11 +136,6 @@ export class GameSystem {
       case 's':
         tank.goBackward()
         break
-      case 'a':
-        tank.turnLef()
-        break
-      case 'd':
-        tank.turnRight()
       default:
         break
     }
