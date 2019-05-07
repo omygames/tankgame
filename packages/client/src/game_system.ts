@@ -118,9 +118,8 @@ export class GameSystem {
   tankFire(playerId?: string) {
     const tank = this.getTank(playerId)
     // TODO: 添加 weapon 逻辑
-    const shell = new SimpleBasicShell(this.graphicsContext)
+    const shell = new SimpleBasicShell(this.graphicsContext, tank.position)
     shell.from = tank
-    shell.position.assign(tank.position)
     shell.velocity.x =
       SimpleBasicShell.maxSpeed * Math.cos(tank.wheelRotation.rotation)
     shell.velocity.y =

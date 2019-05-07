@@ -11,9 +11,11 @@ export class LogicFrame {
 
   tick() {
     this.scene.gameObjects.forEach(gObj => {
-      if (typeof gObj.tick === 'function') {
-        gObj.tick(this.frameTick)
+      if (gObj.toBeDestroyed) {
+        this.scene.removeObject(gObj)
       }
+      gObj.update(this.frameTick)
+      gObj.tick(this.frameTick)
     })
   }
 }
