@@ -22,7 +22,7 @@ const createCanvas = () => {
   return canvas
 }
 
-const initGame = () => {
+const initOnlineGame = () => {
   const updateUI = () => {
     initUI(ui)
   }
@@ -135,4 +135,4 @@ const initGame = () => {
   }
 }
 
-export default initGame
+export default initOnlineGame
