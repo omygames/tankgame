@@ -1,0 +1,77 @@
+.chat {
+  border: 1px solid #ddd;
+  width: 500px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background: rgba(216, 147, 111, 0.24);
+  height: 180px;
+  transition: height .3s ease-in-out 0s;
+}
+.chat.active {
+  padding-bottom: 30px;
+  background: rgba(216, 158, 121, 0.66);
+  height: 350px;
+}
+
+.chat__history {
+  height: inherit;
+  padding: 5px 5px 0 5px;
+  overflow-y: auto;
+  word-break: break-all;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 1px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #535353;
+  }
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    background: #EDEDED;
+  }
+}
+
+.chat__history__line {
+  margin-bottom: 5px;
+}
+
+.chat__footer {
+  position: relative;
+  width: 100%;
+  visibility: hidden;
+  bottom: 0;
+  left: 0;
+  &-input {
+    box-sizing: border-box;
+    height: 30px;
+    width: 100%;
+    border: none;
+    padding: 0 3px;
+  }
+  &-btn {
+    position: absolute;
+    right: 0;
+    top: 1px;
+    height: 30px;
+    line-height: 30px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+}
+.active .chat__footer {
+  visibility: initial;
+}
+
+.chat__history__player-name {
+  display: inline-block;
+  margin-right: 3px;
+  background: darkcyan;
+  color: white;
+  border-radius: 3px;
+  padding: 2px 5px;
+}

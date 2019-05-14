@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import './Chat.css'
+import _ from 'lodash'
+import './Chat.scss'
 import getSocket from '../../../helpers/get_socket'
 import { guid } from '../../../utils/utils'
 
@@ -16,6 +17,7 @@ class Chat extends Component<{
   state = {
     msg: '',
     chatHistory: [],
+    chatLocked: false,
   }
   socket = getSocket()
   chatHist: HTMLElement
@@ -33,17 +35,31 @@ class Chat extends Component<{
           ]),
         },
         () => {
-          this.chatHist.scrollTop =
-            this.chatHist.scrollHeight - this.chatHist.clientHeight
+          this.handleGoToBottom()
         }
       )
     })
+
+    const throttleHandle = _.throttle((evt: Event) => {
+      const target:any = evt.target
+      const locked = target.scrollTop + target.clientHeight + 20 <= target.scrollHeight
+      this.setState({
+        chatLocked: locked
+      })
+    }, 200)
+    this.chatHist.addEventListener('scroll', throttleHandle)
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.show === false && this.props.show) {
       this.input.focus()
     }
+  }
+
+  handleGoToBottom() {
+    if (this.state.chatLocked) return
+
+    this.chatHist.scrollTop = this.chatHist.scrollHeight - this.chatHist.clientHeight
   }
 
   handleKeyDown = e => {
@@ -73,10 +89,7 @@ class Chat extends Component<{
     const { chatHistory, msg } = this.state
     return (
       <div
-        className="chat"
-        style={{
-          visibility: this.props.show ? 'visible' : 'hidden',
-        }}
+          className={[ 'chat', this.props.show ? 'active' : '' ].join(' ')}
       >
         <div
           className="chat__history"
@@ -97,6 +110,7 @@ class Chat extends Component<{
         </div>
         <div className="chat__footer">
           <input
+            className="chat__footer-input"
             ref={ref => (this.input = ref)}
             autoFocus
             onKeyDown={this.handleKeyDown}
@@ -104,7 +118,7 @@ class Chat extends Component<{
             value={msg}
             placeholder="输入消息..."
           />
-          <button onClick={this.handleSend}>发送</button>
+          <button className="chat__footer-btn" onClick={this.handleSend}>发送</button>
         </div>
       </div>
     )
