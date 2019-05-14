@@ -9,4 +9,11 @@ p {
 
 #game-canvas {
   background: #000;
+  display: block;
+}
+
+#game-ui {
+  &__wrap {
+    position: relative;
+  }
 }

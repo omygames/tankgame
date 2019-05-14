@@ -47,10 +47,8 @@ export class Tank extends GameObject {
   }
 
   tick(frameTick) {
-    this.velocity.y =
-      Tank.maxSpeed * Math.sin(this.wheelRotation.rotation) * this.direction
-    this.velocity.x =
-      Tank.maxSpeed * Math.cos(this.wheelRotation.rotation) * this.direction
+    this.velocity.y = Tank.maxSpeed * Math.sin(this.wheelRotation.rotation) * this.direction
+    this.velocity.x = Tank.maxSpeed * Math.cos(this.wheelRotation.rotation) * this.direction
 
     this.position.x += (this.velocity.x * frameTick) / 1000
     this.position.y += (this.velocity.y * frameTick) / 1000
@@ -85,7 +83,9 @@ export class Tank extends GameObject {
     // TODO: 修复中心偏移的问题，目前 rigidBody 以 position 为圆心
     // 中心偏移 rigidBody 也会偏移
     const ctx = this.graphicsContext.ctx
-    const { x, y } = this.position
+    let { x, y } = this.position
+    x -= 9
+    y -= 9
     ctx.save()
     ctx.translate(x + 10, y + 11)
     ctx.rotate(this.wheelRotation.rotation + Math.PI / 2)
@@ -108,10 +108,17 @@ export class Tank extends GameObject {
     ctx.arc(x + 10, y + 10, 3, 0, Math.PI * 2, true)
     ctx.closePath()
     ctx.fill()
+    ctx.stroke()
     ctx.restore()
+
     this.graphicsContext.drawText({
       text: `${this.health}`,
       position: this.position,
+      textAlign: 'center',
+      offset: {
+        x: 0,
+        y: -20,
+      },
     })
   }
 }

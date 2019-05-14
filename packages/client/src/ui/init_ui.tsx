@@ -5,7 +5,7 @@ import Chat from './components/Chat/Chat'
 
 const GameUI = ({ showChat, showJoin, onJoin }) => {
   return (
-    <div>
+    <div className="game-ui__wrap">
       <InfoPanel />
       <Chat show={showChat} />
       {showJoin && (
