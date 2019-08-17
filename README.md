@@ -1,5 +1,3 @@
 # tankgame
 
-## server
-
-port 9000
+A simple 2d game
